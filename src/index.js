@@ -20,14 +20,14 @@ import Error404 from "./components/Error";
 // === Pages === //
 import Accueil from "./pages/Accueil";
 import SignIn from "./pages/SignIn";
-import UserIndex from "./pages/UserIndex";
+import UserIndex, { userIndexLoader } from "./pages/UserIndex";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
       <Route index element={<Accueil />} />
       <Route path="/sign-in" element={<SignIn />} />
-      <Route path="/user" element={<UserIndex />} />
+      <Route path="/user" element={<UserIndex />} loader={await userIndexLoader} />
       <Route path="*" element={<Error404 />} />
     </Route>
   )
@@ -41,11 +41,3 @@ root.render(
     </Provider>
   </React.StrictMode>
 );
-
-/* <Route
-        path="/logement/:id"
-        loader={logementLoader}
-        errorElement={<Error />}
-        element={<Logement />}
-      />
-      <Route path="*" element={<Error />} /> */

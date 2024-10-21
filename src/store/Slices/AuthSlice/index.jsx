@@ -1,18 +1,25 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { userLogout } from "../UserSlice";
 
 const ApiLoginPath = "http://localhost:3001/api/v1/user/login";
 
+/** loginThunk prend en parametre 
+ * @param {object} data qui est un objet qui doit contenir {
+ * email : email,
+ * password : password,
+ * navigate (du hook useNavigate de react-router-dom pour faire la redirection après avoir réussi à se login)
+ * }
+ */
 export const loginThunk = createAsyncThunk(
   "auth/loginThunk",
-  async (credentials, thunkApi) => {
+  async (data, thunkApi) => {
     try {
-      console.log(credentials)
       const loginResponse = await fetch(ApiLoginPath, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: credentials.email,
-          password: credentials.password,
+          email: data.email,
+          password: data.password,
         }),
       });
 
@@ -22,6 +29,8 @@ export const loginThunk = createAsyncThunk(
       }
       thunkApi.dispatch(setAuthToken(loginData.body.token))
       localStorage.setItem('token', loginData.body.token)
+      data.navigate('/user')
+
       
     } catch (error) {
 
@@ -29,6 +38,13 @@ export const loginThunk = createAsyncThunk(
     }
   }
 );
+
+export const logoutThunk = createAsyncThunk('auth/logoutThunk', async (navigate ,thunkApi) => {
+  thunkApi.dispatch(authLogout())
+  thunkApi.dispatch(userLogout())
+  navigate('/')
+}) 
+
 
 
 
@@ -39,11 +55,11 @@ export const authSlice = createSlice({
     setAuthToken: (currentState, action) => {
       return { ...currentState, token : action.payload};
     },
-    logout: (currentState) => {
+    authLogout: (currentState) => {
       localStorage.removeItem('token');
       return { ...currentState, token: null };
     },
   },
 });
 
-export const {setAuthToken, logout } = authSlice.actions
+export const {setAuthToken, authLogout } = authSlice.actions

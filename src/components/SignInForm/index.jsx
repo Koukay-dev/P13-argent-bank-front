@@ -1,13 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 // import { Link } from "react-router-dom";
-import { useDispatch, useStore } from "react-redux";
+import { useDispatch, /*useSelector*/ } from "react-redux";
 import { loginThunk } from "../../store/Slices/AuthSlice";
-import { getToken } from "../../store/Selectors";
+// import { getToken } from "../../store/Selectors";
 import { useNavigate } from "react-router-dom";
 
 export default function SignInForm() {
-  const store = useStore();
+  // const currentState = useSelector((store) => store);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -16,12 +16,11 @@ export default function SignInForm() {
     const username = event.target.username.value;
     const password = event.target.password.value;
 
-    dispatch(loginThunk({ email: username, password: password }));
-    if (getToken(store.getState())) {
-      navigate("/user");
-    } else {
-      alert('Utilisateur ou mot de passe erroné') // à revoir 
-    }
+    dispatch(loginThunk({ email: username, password: password, navigate}))
+      .unwrap()
+      .catch((error) => {
+          alert("Erreur lors de la connection", error);
+      });
   };
 
   return (
@@ -41,10 +40,6 @@ export default function SignInForm() {
           <input type="checkbox" id="remember-me" />
           <label htmlFor="remember-me">Remember me</label>
         </div>
-        {/* <!-- PLACEHOLDER DUE TO STATIC SITE --> */}
-        {/* <Link to="/user" className="sign-in-button">
-          Sign In
-        </Link> */}
         <button type="submit" className="sign-in-button">
           Sign In
         </button>

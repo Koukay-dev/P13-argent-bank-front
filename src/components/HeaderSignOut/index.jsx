@@ -1,21 +1,28 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserCircle,
+  faRightToBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { logoutThunk } from "../../store/Slices/AuthSlice";
 
-
-const userName = "Tony";
-
-export default function HeaderSignOut() {
+export default function HeaderSignOut({ username }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const logout = () => {
+    dispatch(logoutThunk(navigate));
+  };
   return (
     <div>
-          <Link className="main-nav-item" to="/user">
-            <FontAwesomeIcon icon={faUserCircle} />
-            {userName}
-          </Link>
-          <Link className="main-nav-item" to="/">
-            <FontAwesomeIcon icon={faRightToBracket} />
-            Sign Out
-          </Link>
+      <Link className="main-nav-item" to="/user">
+        <FontAwesomeIcon icon={faUserCircle} />
+        {username}
+      </Link>
+      <div onClick={logout} className="main-nav-item sign-out-button" to="/">
+        <FontAwesomeIcon icon={faRightToBracket} />
+        Sign Out
+      </div >
     </div>
-  )
+  );
 }
